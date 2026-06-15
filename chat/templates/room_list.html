@@ -8,6 +8,15 @@
 </head>
 <body>
 
+
+
+{% if request.user.is_teacher %}
+<h3>{{request.user.username}}-Учитель</h3>
+{% endif %}
+{% if request.user.is_student %}
+<h3>{{request.user.username}}-Студент</h3>
+{% endif %}
+<br>
 <h1>---Комнаты---</h1>
 
 <div class="weather" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
