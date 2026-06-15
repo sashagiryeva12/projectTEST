@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Создать комнату</title>
+    <link rel="stylesheet" href="{% static 'chat/css/create_room.css' %}">
+</head>
+<body>
+
+<h1>Создать комнату</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Создать</button>
+</form>
+<a href="{% url 'chat:room_list' %}">посмотреть все комнаты</a>
+</body>
+</html>

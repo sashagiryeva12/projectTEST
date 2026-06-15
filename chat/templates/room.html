@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Chat</title>
+    <link rel="stylesheet" href="{% static 'chat/css/room.css' %}">
+</head>
+<body>
+
+<h1>Чат комнаты</h1>
+
+<div id="chat-box">
+
+    {% for msg in messages %}
+        <p><b>{{ msg.user.username }}:</b> {{ msg.text }}</p>
+    {% endfor %}
+
+</div>
+
+<input type="text" id="msg" placeholder="Введите сообщение">
+<button onclick="sendMessage()">Отправить</button>
+
+<script>
+const roomId = "{{ room.id }}";
+
+const socket = new WebSocket(
+    'ws://' + window.location.host +
+    '/ws/chat/' + roomId + '/'
+);
+
+socket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    
+    document.getElementById("chat-box").innerHTML +=
+        "<p><b>" + data.user  +
+        (data.is_teacher ? " 👨‍🏫" : "") + ":</b> " + data.message + "</p>";
+};
+
+function sendMessage() {
+    if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+            message: document.getElementById("msg").value,
+            user: "{{ request.user.username }}"
+        }));
+
+        document.getElementById("msg").value = "";
+    } else {
+        console.log("WebSocket не подключён");
+    }
+
+}
+</script>
+
+</body>
+</html>

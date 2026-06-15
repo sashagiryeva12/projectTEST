@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rooms</title>
+    <link rel="stylesheet" href="{% static 'chat/css/room_list.css' %}">
+</head>
+<body>
+
+<h1>---Комнаты---</h1>
+
+<div class="weather" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);">
+    {% if weather %}
+        <p><b>{{ weather.city }}</b></p>
+        <p>{{ weather.temp }}°C</p>
+        <p>{{ weather.desc }}</p>
+    {% endif %}
+</div>
+
+<div class="room-list">
+    {% for room in rooms %}
+        <div class="room-card">
+            <a href="{% url 'chat:room_detail' room.id %}">{{ room.name }}</a>
+            <p>Преподаватель — {{ room.teacher.username }}</p>
+            {% if room.teacher == request.user %}
+                <form action="{% url 'chat:delete_room' room.id %}" method="POST"
+                      onsubmit="return confirm('Вы уверены, что хотите удалить эту комнату?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete" style=" margin-top: 0.75rem;background-color: #e74c3c; color: white; border: none;
+  padding: 6px 12px;border-radius: 6px;cursor: pointer;font-size: 0.8rem;transition: background-color 0.15s;">Удалить</button>
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Комнат нет</p>
+    {% endfor %}
+</div>
+
+<a href="{% url 'users:signout' %}">Выйти из аккаунта</a><br>
+
+{% if request.user.is_teacher %}
+<a href="{% url 'chat:create_room' %}" class="btn">Создать комнату</a>
+{% endif %}
+</body>
+</html>
